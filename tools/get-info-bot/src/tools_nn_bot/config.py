@@ -1,6 +1,5 @@
 """Configuration module for Tools_NNBot using Pydantic settings."""
 
-
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -27,20 +26,20 @@ class Settings(BaseSettings):
         description="Comma-separated list of admin Telegram user IDs",
     )
 
-    # Welcome Message
+    # Welcome Message (raw - will be escaped for MarkdownV2 when displayed)
     welcome_message: str = Field(
         default=(
-            "🤖 *Welcome to Tools\\_NNBot*\n\n"
-            "Your personal administrative assistant bot\\.\n\n"
+            "🤖 *Welcome to Tools_NNBot*\n\n"
+            "Your personal administrative assistant bot.\n\n"
             "Available commands:\n"
-            "• /start \\- Show this dashboard\n"
-            "• /info \\<url\\|query\\> \\- Fetch URL/query information\n"
-            "• /system \\- System status and diagnostics\n"
-            "• /help \\- Detailed help information\n\n"
-            "Use inline mode: @botname \\<command\\>\n\n"
-            "_This bot is restricted to authorized administrators\\._"
+            "• /start - Show this dashboard\n"
+            "• /info <url|query> - Fetch URL/query information\n"
+            "• /system - System status and diagnostics\n"
+            "• /help - Detailed help information\n\n"
+            "Use inline mode: @botname <command>\n\n"
+            "_This bot is restricted to authorized administrators._"
         ),
-        description="Custom welcome message shown to admins",
+        description="Custom welcome message shown to admins (will be escaped for MarkdownV2)",
     )
 
     # Rate Limiting Configuration

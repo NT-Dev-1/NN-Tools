@@ -42,12 +42,19 @@ class HTTPClient:
         if self._client:
             await self._client.aclose()
 
-    @retry(
-        retry=retry_if_exception_type((httpx.TimeoutException, httpx.NetworkError)),
-        stop=stop_after_attempt(3),
-        wait=wait_exponential(multiplier=1, min=1, max=10),
-        reraise=True,
-    )
+    def _get_retry_decorator(self):
+        """Get retry decorator with configured settings."""
+        return retry(
+            retry=retry_if_exception_type((httpx.TimeoutException, httpx.NetworkError)),
+            stop=stop_after_attempt(self.settings.http_max_retries),
+            wait=wait_exponential(
+                multiplier=1,
+                min=self.settings.http_retry_wait_min,
+                max=self.settings.http_retry_wait_max,
+            ),
+            reraise=True,
+        )
+
     async def fetch_url_info(self, url: str) -> dict[str, str]:
         """Fetch information about a URL with retries.
 
@@ -59,6 +66,20 @@ class HTTPClient:
 
         Raises:
             httpx.HTTPError: If request fails after retries
+        """
+        # Apply retry decorator dynamically
+        retry_decorator = self._get_retry_decorator()
+        fetch_func = retry_decorator(self._fetch_url_info_impl)
+        return await fetch_func(url)
+
+    async def _fetch_url_info_impl(self, url: str) -> dict[str, str]:
+        """Implementation of URL fetching with retry logic applied.
+
+        Args:
+            url: URL to fetch
+
+        Returns:
+            Dictionary with URL information
         """
         if not self._client:
             raise RuntimeError("HTTP client not initialized. Use 'async with' context.")

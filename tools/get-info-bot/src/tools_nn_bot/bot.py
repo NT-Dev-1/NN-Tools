@@ -26,6 +26,7 @@ from .http_client import HTTPClient
 from .logging_config import get_logger
 from .plugins import BasePlugin, GetInfoPlugin, SystemPlugin
 from .rate_limiter import RateLimiter
+from .utils import escape_markdown_v2
 
 logger = get_logger(__name__)
 
@@ -108,7 +109,7 @@ class ToolsNNBot:
 
         # Send custom welcome message with inline dashboard
         await update.message.reply_text(
-            self.settings.welcome_message,
+            escape_markdown_v2(self.settings.welcome_message),
             reply_markup=create_main_dashboard(),
             parse_mode="MarkdownV2",
         )
@@ -198,7 +199,7 @@ class ToolsNNBot:
             query: Callback query
         """
         await query.edit_message_text(
-            self.settings.welcome_message,
+            escape_markdown_v2(self.settings.welcome_message),
             reply_markup=create_main_dashboard(),
             parse_mode="MarkdownV2",
         )
@@ -212,7 +213,9 @@ class ToolsNNBot:
         # Get system plugin if available
         system_plugin = self.plugins.get("system")
         if system_plugin and isinstance(system_plugin, SystemPlugin):
-            uptime = asyncio.get_event_loop().time()
+            from datetime import datetime
+
+            uptime = (datetime.now() - system_plugin.start_time).total_seconds()
             uptime_formatted = system_plugin._format_uptime(uptime)
 
             message = (

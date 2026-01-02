@@ -1,6 +1,6 @@
 """System plugin for bot diagnostics and status."""
 
-import asyncio
+import os
 import platform
 import sys
 from datetime import datetime
@@ -70,7 +70,7 @@ class SystemPlugin(BasePlugin):
             f"*Platform:* `{platform.system()} {platform.release()}`",
             f"*Start Time:* `{self.start_time.strftime('%Y-%m-%d %H:%M:%S UTC')}`",
             "\n*Process Info:*",
-            f"• PID: `{asyncio.current_task().get_name() if asyncio.current_task() else 'N/A'}`",
+            f"• PID: `{os.getpid()}`",
         ]
 
         message = "\n".join(system_info)
