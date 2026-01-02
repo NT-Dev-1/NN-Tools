@@ -4,7 +4,6 @@ import asyncio
 import platform
 import sys
 from datetime import datetime
-from typing import List
 
 from telegram import Update
 from telegram.ext import BaseHandler, CommandHandler, ContextTypes
@@ -27,7 +26,7 @@ class SystemPlugin(BasePlugin):
         )
         self.start_time = datetime.now()
 
-    def get_handlers(self) -> List[BaseHandler]:
+    def get_handlers(self) -> list[BaseHandler]:
         """Get plugin handlers.
 
         Returns:
@@ -70,7 +69,7 @@ class SystemPlugin(BasePlugin):
             f"*Python Version:* `{sys.version.split()[0]}`",
             f"*Platform:* `{platform.system()} {platform.release()}`",
             f"*Start Time:* `{self.start_time.strftime('%Y-%m-%d %H:%M:%S UTC')}`",
-            f"\n*Process Info:*",
+            "\n*Process Info:*",
             f"• PID: `{asyncio.current_task().get_name() if asyncio.current_task() else 'N/A'}`",
         ]
 

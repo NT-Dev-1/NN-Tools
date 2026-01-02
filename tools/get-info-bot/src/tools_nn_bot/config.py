@@ -1,6 +1,5 @@
 """Configuration module for Tools_NNBot using Pydantic settings."""
 
-from typing import List
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -23,7 +22,7 @@ class Settings(BaseSettings):
     )
 
     # Admin Configuration
-    admin_ids: List[int] = Field(
+    admin_ids: list[int] = Field(
         default_factory=list,
         description="Comma-separated list of admin Telegram user IDs",
     )

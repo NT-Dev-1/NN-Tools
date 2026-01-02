@@ -3,7 +3,6 @@
 import asyncio
 import time
 from collections import defaultdict
-from typing import DefaultDict, Tuple
 
 from .logging_config import get_logger
 
@@ -22,10 +21,10 @@ class RateLimiter:
         """
         self.max_requests = max_requests
         self.window_seconds = window_seconds
-        self._user_requests: DefaultDict[int, list[float]] = defaultdict(list)
+        self._user_requests: defaultdict[int, list[float]] = defaultdict(list)
         self._lock = asyncio.Lock()
 
-    async def check_rate_limit(self, user_id: int) -> Tuple[bool, float]:
+    async def check_rate_limit(self, user_id: int) -> tuple[bool, float]:
         """Check if user has exceeded rate limit.
 
         Args:
@@ -40,9 +39,7 @@ class RateLimiter:
 
             # Remove old requests outside the window
             self._user_requests[user_id] = [
-                req_time
-                for req_time in self._user_requests[user_id]
-                if req_time > cutoff_time
+                req_time for req_time in self._user_requests[user_id] if req_time > cutoff_time
             ]
 
             request_count = len(self._user_requests[user_id])
@@ -74,7 +71,7 @@ class RateLimiter:
         async with self._lock:
             current_time = time.time()
             cutoff_time = current_time - self.window_seconds * 2  # Keep extra buffer
-            
+
             users_to_remove = []
             for user_id, requests in self._user_requests.items():
                 # Filter old requests
@@ -83,10 +80,10 @@ class RateLimiter:
                     self._user_requests[user_id] = recent_requests
                 else:
                     users_to_remove.append(user_id)
-            
+
             # Remove users with no recent requests
             for user_id in users_to_remove:
                 del self._user_requests[user_id]
-            
+
             if users_to_remove:
                 logger.debug("rate_limiter_cleanup", removed_users=len(users_to_remove))

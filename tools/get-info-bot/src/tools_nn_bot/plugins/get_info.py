@@ -1,7 +1,6 @@
 """Get-Info plugin for fetching URL and query information."""
 
 import re
-from typing import List
 
 from telegram import Update
 from telegram.ext import BaseHandler, CommandHandler, ContextTypes
@@ -32,7 +31,7 @@ class GetInfoPlugin(BasePlugin):
         self.settings = settings
         self.http_client = http_client
 
-    def get_handlers(self) -> List[BaseHandler]:
+    def get_handlers(self) -> list[BaseHandler]:
         """Get plugin handlers.
 
         Returns:
@@ -134,7 +133,13 @@ class GetInfoPlugin(BasePlugin):
 
         if "title" in info:
             # Escape markdown special characters in title
-            title = info['title'].replace('_', '\\_').replace('*', '\\*').replace('[', '\\[').replace('`', '\\`')
+            title = (
+                info["title"]
+                .replace("_", "\\_")
+                .replace("*", "\\*")
+                .replace("[", "\\[")
+                .replace("`", "\\`")
+            )
             lines.append(f"*Title:* {title}")
 
         return "\n".join(lines)

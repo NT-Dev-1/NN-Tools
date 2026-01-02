@@ -1,9 +1,8 @@
 """Base plugin class for Tools_NNBot plugins."""
 
 from abc import ABC, abstractmethod
-from typing import Dict, List
 
-from telegram.ext import Application, BaseHandler
+from telegram.ext import BaseHandler
 
 
 class BasePlugin(ABC):
@@ -23,7 +22,7 @@ class BasePlugin(ABC):
         self.enabled = True
 
     @abstractmethod
-    def get_handlers(self) -> List[BaseHandler]:
+    def get_handlers(self) -> list[BaseHandler]:
         """Get list of handlers to register with the bot.
 
         Returns:
@@ -41,7 +40,7 @@ class BasePlugin(ABC):
         """Cleanup plugin resources (called on bot shutdown)."""
         pass
 
-    def get_info(self) -> Dict[str, str]:
+    def get_info(self) -> dict[str, str]:
         """Get plugin information.
 
         Returns:

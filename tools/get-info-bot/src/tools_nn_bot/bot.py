@@ -1,9 +1,13 @@
 """Tools_NNBot - Admin-only Telegram bot with plugin system."""
 
 import asyncio
-from typing import Dict, List, Optional
 
-from telegram import CallbackQuery, InlineQueryResultArticle, InputTextMessageContent, Update
+from telegram import (
+    CallbackQuery,
+    InlineQueryResultArticle,
+    InputTextMessageContent,
+    Update,
+)
 from telegram.ext import (
     Application,
     CallbackQueryHandler,
@@ -40,8 +44,8 @@ class ToolsNNBot:
             max_requests=settings.rate_limit_requests,
             window_seconds=settings.rate_limit_window_seconds,
         )
-        self.http_client: Optional[HTTPClient] = None
-        self.plugins: Dict[str, BasePlugin] = {}
+        self.http_client: HTTPClient | None = None
+        self.plugins: dict[str, BasePlugin] = {}
 
     def _is_admin(self, user_id: int) -> bool:
         """Check if user is an admin.
@@ -53,13 +57,13 @@ class ToolsNNBot:
             True if user is admin, False otherwise
         """
         if not self.settings.admin_ids:
-            logger.warning("no_admins_configured", message="No admin IDs configured, denying access")
+            logger.warning(
+                "no_admins_configured", message="No admin IDs configured, denying access"
+            )
             return False
         return user_id in self.settings.admin_ids
 
-    async def _check_admin_access(
-        self, update: Update, context: ContextTypes.DEFAULT_TYPE
-    ) -> bool:
+    async def _check_admin_access(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
         """Check if user has admin access and respond accordingly.
 
         Args:
@@ -88,7 +92,6 @@ class ToolsNNBot:
             return False
 
         return True
-
 
     async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle /start command - show welcome and inline dashboard.
@@ -135,25 +138,22 @@ class ToolsNNBot:
 
         for plugin_name, plugin in self.plugins.items():
             status = "✅" if plugin.enabled else "❌"
-            help_lines.append(
-                f"{status} *{plugin.name}* \\- {plugin.description}"
-            )
+            help_lines.append(f"{status} *{plugin.name}* \\- {plugin.description}")
 
-        help_lines.extend([
-            "",
-            f"*Rate Limiting:* {self.settings.rate_limit_requests} requests per "
-            f"{self.settings.rate_limit_window_seconds} seconds",
-            "",
-            "_Use the inline dashboard for quick access to features\\._",
-        ])
+        help_lines.extend(
+            [
+                "",
+                f"*Rate Limiting:* {self.settings.rate_limit_requests} requests per "
+                f"{self.settings.rate_limit_window_seconds} seconds",
+                "",
+                "_Use the inline dashboard for quick access to features\\._",
+            ]
+        )
 
         help_message = "\n".join(help_lines)
         await update.message.reply_text(
-            help_message, 
-            reply_markup=create_back_button(),
-            parse_mode="MarkdownV2"
+            help_message, reply_markup=create_back_button(), parse_mode="MarkdownV2"
         )
-
 
     async def callback_query_handler(
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
@@ -324,7 +324,6 @@ class ToolsNNBot:
             parse_mode="MarkdownV2",
         )
 
-
     async def inline_query(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         """Handle inline queries (admin-only).
 
@@ -383,7 +382,6 @@ class ToolsNNBot:
         )
 
         await query.answer([result], cache_time=60)
-
 
     async def run(self) -> None:
         """Run the bot."""

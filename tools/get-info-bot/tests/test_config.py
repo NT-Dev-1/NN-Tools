@@ -36,8 +36,26 @@ def test_settings_defaults() -> None:
 
 def test_settings_missing_required_field() -> None:
     """Test that missing required field raises validation error."""
-    with pytest.raises(ValidationError):
-        Settings()
+    # With ADMIN_IDS and TELEGRAM_BOT_TOKEN in environment from test run,
+    # we need to clear them to test validation
+
+    old_token = os.environ.get("TELEGRAM_BOT_TOKEN")
+    old_admin = os.environ.get("ADMIN_IDS")
+
+    try:
+        if "TELEGRAM_BOT_TOKEN" in os.environ:
+            del os.environ["TELEGRAM_BOT_TOKEN"]
+        if "ADMIN_IDS" in os.environ:
+            del os.environ["ADMIN_IDS"]
+
+        with pytest.raises(ValidationError):
+            Settings()
+    finally:
+        # Restore
+        if old_token:
+            os.environ["TELEGRAM_BOT_TOKEN"] = old_token
+        if old_admin:
+            os.environ["ADMIN_IDS"] = old_admin
 
 
 def test_settings_custom_values() -> None:

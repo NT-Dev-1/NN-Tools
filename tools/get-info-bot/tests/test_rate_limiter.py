@@ -91,13 +91,13 @@ async def test_rate_limiter_cleanup() -> None:
     # Verify user is tracked
     assert user_id in limiter._user_requests
 
-    # Wait for window to pass
-    await asyncio.sleep(1.1)
+    # Wait for window to pass plus extra buffer time
+    await asyncio.sleep(2.5)
 
-    # Run cleanup
+    # Run cleanup - cleanup uses 2x window as cutoff
     await limiter.cleanup_old_entries()
 
-    # User should be removed after cleanup since no recent requests
+    # User should be removed after cleanup since no recent requests beyond 2x window
     assert user_id not in limiter._user_requests
 
 
